@@ -1,0 +1,219 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  background-color: #333;
+  color: white;
+  border-bottom: 1px solid #ccc;
+  position: relative;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+  white-space: nowrap;
+}
+
+header img {
+  height: 50px; /* Adjust the height to control the image size */
+  margin-right: 20px; /* Space between the image and the title */
+}
+
+.logout-button {
+  background-color: #dc3545; /* Red color */
+    color: white;
+    border: none;
+    padding: 5px 10px; /* Reduced padding */
+    cursor: pointer;
+    font-size: 14px; /* Smaller font size */
+    border-radius: 4px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.logout-button:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  background-color: #444;
+  color: white;
+}
+
+nav ul li {
+  margin-right: 15px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+  display: block;
+  border-radius: 5px;
+}
+
+nav ul li a:hover {
+  background-color: #555;
+}
+
+main {
+  padding: 20px;
+}
+
+section {
+  margin-top: 2rem;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-width: 1000px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.styled-table thead tr {
+  background-color: #4caf50;
+  color: #ffffff;
+  text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+  border-bottom: 2px solid #4caf50;
+}
+
+.styled-table tbody tr.active-row {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.styled-table button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  font-size: 0.8em;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.styled-table button:hover {
+  background-color: #0056b3;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 60%;
+  max-width: 700px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-right: 20px;
+  flex: 1;
+}
+
+.form-group div {
+  flex: 3;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-group div span {
+  margin-right: 20px;
+  color: #555;
+  flex: 1;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 60%;
+  flex: 2;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button[type="cancel"] {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button[type="cancel"]:hover {
+  background-color: #c9302c;
+}
+
+button[type="button"] {
+  background-color: #d9534f;
+  margin-left: 10px;
+}
+
+button[type="button"]:hover {
+  background-color: #c9302c;
+}

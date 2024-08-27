@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPLIT Inventory Management System</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Include Vue.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <!-- Include Axios via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <img src="images/split.png" alt="SPLIT" />
+        <h1>SPLIT Inventory Management System</h1>
+        <button @click="logout" class="logout-button">Logout</button>
+      </header>
+      <main>
+        <!-- Navigation Menu, visible only when logged in -->
+        <nav v-if="isAuthenticated">
+          <ul>
+            <li><a href="#" @click="navigate('dashboard')">Dashboard</a></li>
+            <li v-if="currentUserRole === 'Central Office Administrator' || currentUserRole === 'Inventory Manager'">
+              <a href="#" @click="navigate('offices')">Manage Offices</a>
+            </li>
+            <li v-if="currentUserRole === 'Inventory Manager'">
+              <a href="#" @click="navigate('equipment')">Manage Equipment</a>
+            </li>
+            <li
+              v-if="currentUserRole === 'Central Office Administrator' || currentUserRole === 'Inventory Manager' || currentUserRole === 'Maintenance Staff'"
+            >
+              <a href="#" @click="navigate('requests')">Manage Requests</a>
+            </li>
+            <li><a href="#" @click="navigate('transfers')">Transfers</a></li>
+            <li><a href="#" @click="navigate('auditing')">Auditing Logs</a></li>
+            <li><a href="#" @click="navigate('maintenance')">Maintenance</a></li>
+            <li><a href="#" @click="navigate('Reports')">Reports</a></li>
+          </ul>
+        </nav>
+
+        <!-- Dashboard Section -->
+        <section v-if="currentView === 'dashboard'">
+          <h2>Dashboard</h2>
+          <p>Here’s an overview of the system.</p>
+          <div>
+            <img src="images/dashboard.jpg" alt="Dashboard" />
+          </div>
+        </section>
+
+        <!-- Office Management Section -->
+        <section v-if="currentView === 'offices'">
+          <h2>Manage Offices</h2>
+          <table class="styled-table">
+            <tr>
+              <th>Region</th>
+              <th>Province</th>
+              <th>Office Type</th>
+              <th>Actions</th>
+            </tr>
+            <tr v-for="office in offices" :key="office.OfficeID">
+              <td>{{ office.Region }}</td>
+              <td>{{ office.Province }}</td>
+              <td>{{ office.OfficeType }}</td>
+              <td>
+                <button @click="editOffice(office)">Edit</button>
+                <button type="cancel" @click="deleteOffice(office.OfficeID)">Delete</button>
+              </td>
+            </tr>
+          </table>
+          <!-- Form to add/edit offices -->
+          <form @submit.prevent="saveOffice">
+            <div>
+              <label>Region:</label>
+              <input type="text" v-model="officeForm.Region" required />
+            </div>
+            <div>
+              <label>Province:</label>
+              <input type="text" v-model="officeForm.Province" required />
+            </div>
+            <div>
+              <label>Office Type:</label>
+              <select v-model="officeForm.OfficeType">
+                <option>Central</option>
+                <option>Regional</option>
+                <option>Provincial</option>
+              </select>
+            </div>
+            <button type="submit">Save Office</button>
+          </form>
+        </section>
+
+        <!-- Equipment Management Section -->
+        <section v-if="currentView === 'equipment'">
+          <h2>Manage Equipment</h2>
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>EQUIPMENT</th>
+                <th>CATEGORY</th>
+                <th>SERIAL NO.</th>
+                <th>PROPERTY NO.</th>
+                <th>PAR/PTR/ICS NO.</th>
+                <th>STATUS</th>
+                <th>LOCATION</th>
+                <th>ISSUED TO</th>
+                <th>REMARKS</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in equipmentList" :key="item.EquipmentID">
+                <td>{{ item.Equipment }}</td>
+                <td>{{ item.Category }}</td>
+                <td>{{ item.SerialNumber }}</td>
+                <td>{{ item.PropertyNumber }}</td>
+                <td>{{ item.ParPtrIcsNumber }}</td>
+                <td>{{ item.CurrentStatus }}</td>
+                <td>{{ item.Location }}</td>
+                <td>{{ item.IssuedTo }}</td>
+                <td>{{ item.Remarks }}</td>
+                <td>
+                  <button @click="openEditModal(item)">Edit</button>
+                  <button type="cancel" @click="deleteEquipment(item.EquipmentID)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Edit Modal -->
+          <div v-if="showModal" class="modal">
+            <div class="modal-content">
+              <h3>Edit Equipment</h3>
+              <form @submit.prevent="updateEquipment">
+                <div class="form-group">
+                  <label>Equipment:</label>
+                  <div>
+                    <span>{{ selectedEquipment.Equipment }}</span>
+                    <input type="text" v-model="editForm.Equipment" placeholder="Update Equipment" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Category:</label>
+                  <div>
+                    <span>{{ selectedEquipment.Category }}</span>
+                    <input type="text" v-model="editForm.Category" placeholder="Update Category" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Serial Number:</label>
+                  <div>
+                    <span>{{ selectedEquipment.SerialNumber }}</span>
+                    <input type="text" v-model="editForm.SerialNumber" placeholder="Update Serial Number" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Property Number:</label>
+                  <div>
+                    <span>{{ selectedEquipment.PropertyNumber }}</span>
+                    <input type="text" v-model="editForm.PropertyNumber" placeholder="Update Property Number" />
+                  </div>
+                </div>
+                <!-- Repeat for other fields -->
+                <div class="form-group">
+                  <label>Current Status:</label>
+                  <div>
+                    <span>{{ selectedEquipment.CurrentStatus }}</span>
+                    <select v-model="editForm.CurrentStatus">
+                      <option value="Received">Received</option>
+                      <option value="In Inspection">In Inspection</option>
+                      <option value="Ready for Deployment">Ready for Deployment</option>
+                      <option value="Assigned">Assigned</option>
+                      <option value="In Use">In Use</option>
+                      <option value="Under Maintenance">Under Maintenance</option>
+                      <option value="Repair Required">Repair Required</option>
+                      <option value="In Transit">In Transit</option>
+                      <option value="Available">Available</option>
+                      <option value="Reserved">Reserved</option>
+                      <option value="Decommissioned">Decommissioned</option>
+                      <option value="Disposed">Disposed</option>
+                      <option value="Lost/Stolen">Lost/Stolen</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit">Update</button>
+                <button type="button" @click="closeModal">Cancel</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Request Management Section -->
+        <section v-if="currentView === 'requests'">
+          <h2>Manage Requests</h2>
+          <table>
+            <tr>
+              <th>Equipment</th>
+              <th>From Office</th>
+              <th>To Office</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+            <tr v-for="request in requestList" :key="request.RequestID">
+              <td>{{ request.EquipmentName }}</td>
+              <td>{{ request.FromOffice }}</td>
+              <td>{{ request.ToOffice }}</td>
+              <td>{{ request.RequestStatus }}</td>
+              <td>
+                <button @click="editRequest(request)">Edit</button>
+                <button @click="deleteRequest(request.RequestID)">Delete</button>
+              </td>
+            </tr>
+          </table>
+          <!-- Form to add/edit requests -->
+          <form @submit.prevent="saveRequest">
+            <div>
+              <label>Equipment ID:</label>
+              <input type="number" v-model="requestForm.EquipmentID" required />
+            </div>
+            <div>
+              <label>From Office ID:</label>
+              <input type="number" v-model="requestForm.FromOfficeID" required />
+            </div>
+            <div>
+              <label>To Office ID:</label>
+              <input type="number" v-model="requestForm.ToOfficeID" required />
+            </div>
+            <div>
+              <label>Status:</label>
+              <select v-model="requestForm.RequestStatus">
+                <option>Pending</option>
+                <option>Approved</option>
+                <option>Rejected</option>
+                <option>Fulfilled</option>
+              </select>
+            </div>
+            <button type="submit">Save Request</button>
+          </form>
+        </section>
+      </main>
+    </div>
+    <!-- Link to your custom app logic -->
+    <script src="app.js"></script>
+  </body>
+</html>
